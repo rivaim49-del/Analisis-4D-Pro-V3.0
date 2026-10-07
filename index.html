@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>ANALISIS RESULT 4 DIGIT</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#07111f;
+    color:white;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:15px;
+}
+
+.header{
+    background:linear-gradient(135deg,#123b72,#087f8c);
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.header h1{
+    margin:0;
+    font-size:24px;
+}
+
+.header p{
+    margin:8px 0 0;
+    color:#d8faff;
+}
+
+.card{
+    background:#101d2d;
+    border:1px solid #243b55;
+    border-radius:14px;
+    padding:15px;
+    margin-bottom:15px;
+}
+
+h2{
+    font-size:18px;
+    margin-top:0;
+    color:#5ee7ff;
+}
+
+textarea{
+    width:100%;
+    min-height:120px;
+    resize:vertical;
+    background:#07111f;
+    color:white;
+    border:1px solid #35516e;
+    border-radius:10px;
+    padding:12px;
+    font-size:16px;
+}
+
+button{
+    border:0;
+    border-radius:10px;
+    padding:12px 16px;
+    margin:5px 3px 0 0;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-main{
+    background:#00bcd4;
+    color:#001018;
+}
+
+.btn-reset{
+    background:#e53935;
+    color:white;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.box{
+    background:#0a1726;
+    border:1px solid #29435e;
+    border-radius:10px;
+    padding:12px;
+}
+
+.box b{
+    display:block;
+    font-size:20px;
+    color:#63e6ff;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th,td{
+    border:1px solid #29435e;
+    padding:8px;
+    text-align:center;
+}
+
+th{
+    background:#163452;
+}
+
+td{
+    background:#0a1726;
+}
+
+.digit-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+}
+
+.digit{
+    text-align:center;
+    background:#0a1726;
+    border:1px solid #29435e;
+    border-radius:9px;
+    padding:10px 5px;
+}
+
+.digit strong{
+    font-size:22px;
+    display:block;
+    color:#6ee7ff;
+}
+
+.pair{
+    display:inline-block;
+    background:#10283d;
+    border:1px solid #2f5875;
+    border-radius:8px;
+    padding:7px 10px;
+    margin:4px;
+    color:#fff;
+}
+
+.note{
+    font-size:13px;
+    color:#a9bfd1;
+    line-height:1.5;
+}
+
+@media(max-width:600px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .digit-grid{
+        grid-template-columns:repeat(5,1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+    <h1>ANALISIS RESULT 4 DIGIT</h1>
+    <p>Analisis statistik berdasarkan data result historis</p>
+</div>
+
+<div class="card">
+
+<h2>1. Masukkan Data Result</h2>
+
+<p class="note">
+Masukkan result 4 digit. Bisa satu angka per baris atau dipisahkan dengan spasi/koma.
+Contoh: 1234, 5678, 9012
+</p>
+
+<textarea id="results"
+placeholder="Contoh:
+1234
+5678
+9012
+3456"></textarea>
+
+<br>
+
+<button class="btn-main" onclick="analisis()">
+ANALISIS DATA
+</button>
+
+<button class="btn-reset" onclick="resetData()">
+RESET
+</button>
+
+</div>
+
+<div id="hasil" style="display:none">
+
+<div class="card">
+
+<h2>2. Ringkasan Data</h2>
+
+<div class="grid">
+
+<div class="box">
+Total Result
+<b id="total"></b>
+</div>
+
+<div class="box">
+Jumlah Digit
+<b id="jumlahDigit"></b>
+</div>
+
+<div class="box">
+Digit Terbanyak
+<b id="terbanyak"></b>
+</div>
+
+<div class="box">
+Digit Tersedikit
+<b id="tersedikit"></b>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>3. Frekuensi Digit 0–9</h2>
+
+<div id="digitGrid" class="digit-grid"></div>
+
+</div>
+
+
+<div class="card">
+
+<h2>4. Statistik Posisi</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Posisi</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>AS</td>
+<td id="as0">0</td><td id="as1">0</td>
+<td id="as2">0</td><td id="as3">0</td>
+<td id="as4">0</td><td id="as5">0</td>
+<td id="as6">0</td><td id="as7">0</td>
+<td id="as8">0</td><td id="as9">0</td>
+</tr>
+
+<tr>
+<td>KOP</td>
+<td id="kop0">0</td><td id="kop1">0</td>
+<td id="kop2">0</td><td id="kop3">0</td>
+<td id="kop4">0</td><td id="kop5">0</td>
+<td id="kop6">0</td><td id="kop7">0</td>
+<td id="kop8">0</td><td id="kop9">0</td>
+</tr>
+
+<tr>
+<td>KEPALA</td>
+<td id="kep0">0</td><td id="kep1">0</td>
+<td id="kep2">0</td><td id="kep3">0</td>
+<td id="kep4">0</td><td id="kep5">0</td>
+<td id="kep6">0</td><td id="kep7">0</td>
+<td id="kep8">0</td><td id="kep9">0</td>
+</tr>
+
+<tr>
+<td>EKOR</td>
+<td id="ekor0">0</td><td id="ekor1">0</td>
+<td id="ekor2">0</td><td id="ekor3">0</td>
+<td id="ekor4">0</td><td id="ekor5">0</td>
+<td id="ekor6">0</td><td id="ekor7">0</td>
+<td id="ekor8">0</td><td id="ekor9">0</td>
+</tr>
+
+</tbody>
+</table>
+
+</div>
+
+
+<div class="card">
+
+<h2>5. Pasangan ML</h2>
+<div id="ML"></div>
+
+<h2>6. Pasangan Mb</h2>
+<div id="MB"></div>
+
+<h2>7. Pasangan Index</h2>
+<div id="INDEX"></div>
+
+<h2>8. Pasangan Ty</h2>
+<div id="TY"></div>
+
+<h2>9. Pasangan M0</h2>
+<div id="M0"></div>
+
+<h2>10. Pasangan M9</h2>
+<div id="M9"></div>
+
+</div>
+
+
+<div class="card">
+
+<h2>11. Statistik Digit per Posisi</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Posisi</th>
+<th>Digit Paling Sering</th>
+<th>Frekuensi</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>AS</td>
+<td id="topAs"></td>
+<td id="freqAs"></td>
+</tr>
+
+<tr>
+<td>KOP</td>
+<td id="topKop"></td>
+<td id="freqKop"></td>
+</tr>
+
+<tr>
+<td>KEPALA</td>
+<td id="topKepala"></td>
+<td id="freqKepala"></td>
+</tr>
+
+<tr>
+<td>EKOR</td>
+<td id="topEkor"></td>
+<td id="freqEkor"></td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="card">
+
+<h2>12. Keterangan</h2>
+
+<p class="note">
+ML, Mb, Index, Ty, M0 dan M9 menggunakan pasangan angka
+yang diberikan pada tabel referensi. Hasil bagian ini merupakan
+pengelompokan statistik dari data historis yang dimasukkan dan
+bukan jaminan hasil di masa mendatang.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   REFERENSI RUMUS GAMBAR
+========================= */
+
+const RUMUS = {
+
+ML:[
+["0","1"],
+["2","5"],
+["3","8"],
+["4","7"],
+["6","9"]
+],
+
+MB:[
+["0","8"],
+["2","6"],
+["3","9"],
+["4","5"],
+["7","1"]
+],
+
+INDEX:[
+["0","5"],
+["2","7"],
+["3","8"],
+["4","9"],
+["1","6"]
+],
+
+TY:[
+["0","7"],
+["2","9"],
+["3","6"],
+["4","1"],
+["5","8"]
+],
+
+M0:[
+["0","6"],
+["1","5"],
+["2","8"],
+["3","7"],
+["4","9"]
+],
+
+M9:[
+["0","9"],
+["1","8"],
+["2","7"],
+["3","6"],
+["4","5"]
+]
+
+};
+
+
+/* =========================
+   ANALISIS UTAMA
+========================= */
+
+function analisis(){
+
+    let raw=document.getElementById("results").value;
+
+    let data=raw.match(/\b\d{4}\b/g);
+
+    if(!data || data.length===0){
+
+        alert("Masukkan minimal satu result 4 digit.");
+
+        return;
+    }
+
+    let frek=Array(10).fill(0);
+
+    let posisi={
+        AS:Array(10).fill(0),
+        KOP:Array(10).fill(0),
+        KEPALA:Array(10).fill(0),
+        EKOR:Array(10).fill(0)
+    };
+
+
+    data.forEach(num=>{
+
+        let d=num.split("").map(Number);
+
+        d.forEach(x=>{
+            frek[x]++;
+        });
+
+        posisi.AS[d[0]]++;
+        posisi.KOP[d[1]]++;
+        posisi.KEPALA[d[2]]++;
+        posisi.EKOR[d[3]]++;
+
+    });
+
+
+    document.getElementById("hasil").style.display="block";
+
+    document.getElementById("total").textContent=data.length;
+
+    document.getElementById("jumlahDigit").textContent=data.length*4;
+
+
+    let max=Math.max(...frek);
+    let min=Math.min(...frek);
+
+    let maxDigit=[];
+    let minDigit=[];
+
+    frek.forEach((v,i)=>{
+
+        if(v===max) maxDigit.push(i);
+
+        if(v===min) minDigit.push(i);
+
+    });
+
+
+    document.getElementById("terbanyak").textContent=
+        maxDigit.join(" , ");
+
+    document.getElementById("tersedikit").textContent=
+        minDigit.join(" , ");
+
+
+    tampilDigit(frek);
+
+    tampilPosisi(posisi);
+
+    tampilRumus("ML",RUMUS.ML,frek);
+
+    tampilRumus("MB",RUMUS.MB,frek);
+
+    tampilRumus("INDEX",RUMUS.INDEX,frek);
+
+    tampilRumus("TY",RUMUS.TY,frek);
+
+    tampilRumus("M0",RUMUS.M0,frek);
+
+    tampilRumus("M9",RUMUS.M9,frek);
+
+
+    tampilTop("AS",posisi.AS);
+
+    tampilTop("KOP",posisi.KOP);
+
+    tampilTop("KEPALA",posisi.KEPALA);
+
+    tampilTop("EKOR",posisi.EKOR);
+
+}
+
+
+/* =========================
+   TAMPIL DIGIT
+========================= */
+
+function tampilDigit(frek){
+
+    let html="";
+
+    for(let i=0;i<=9;i++){
+
+        let persen=
+            frek.reduce((a,b)=>a+b,0)>0
+            ? ((frek[i]/frek.reduce((a,b)=>a+b,0))*100).toFixed(1)
+            : 0;
+
+        html+=`
+
+        <div class="digit">
+
+            <strong>${i}</strong>
+
+            Frekuensi: ${frek[i]}<br>
+
+            ${persen}%
+
+        </div>
+
+        `;
+
+    }
+
+    document.getElementById("digitGrid").innerHTML=html;
+
+}
+
+
+/* =========================
+   POSISI
+========================= */
+
+function tampilPosisi(pos){
+
+    Object.keys(pos).forEach(nama=>{
+
+        for(let i=0;i<=9;i++){
+
+            let el=document.getElementById(
+                nama.toLowerCase()+i
+            );
+
+            if(el){
+                el.textContent=pos[nama][i];
+            }
+
+        }
+
+    });
+
+}
+
+
+/* =========================
+   PASANGAN RUMUS
+========================= */
+
+function tampilRumus(id,pairs,frek){
+
+    let html="";
+
+    pairs.forEach(pair=>{
+
+        let a=Number(pair[0]);
+        let b=Number(pair[1]);
+
+        let total=frek[a]+frek[b];
+
+        html+=`
+
+        <span class="pair">
+
+        ${a} - ${b}
+
+        &nbsp; | &nbsp;
+
+        total frekuensi: ${total}
+
+        </span>
+
+        `;
+
+    });
+
+    document.getElementById(id).innerHTML=html;
+
+}
+
+
+/* =========================
+   TOP POSISI
+========================= */
+
+function tampilTop(nama,arr){
+
+    let max=Math.max(...arr);
+
+    let digit=[];
+
+    arr.forEach((v,i)=>{
+
+        if(v===max){
+
+            digit.push(i);
+
+        }
+
+    });
+
+
+    let id1="";
+    let id2="";
+
+
+    if(nama==="AS"){
+        id1="topAs";
+        id2="freqAs";
+    }
+
+    if(nama==="KOP"){
+        id1="topKop";
+        id2="freqKop";
+    }
+
+    if(nama==="KEPALA"){
+        id1="topKepala";
+        id2="freqKepala";
+    }
+
+    if(nama==="EKOR"){
+        id1="topEkor";
+        id2="freqEkor";
+    }
+
+
+    document.getElementById(id1).textContent=
+        digit.join(" , ");
+
+    document.getElementById(id2).textContent=max;
+
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+function resetData(){
+
+    document.getElementById("results").value="";
+
+    document.getElementById("hasil").style.display="none";
+
+}
+
+</script>
+
+</body>
+</html>
