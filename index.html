@@ -731,3 +731,222 @@ function resetData(){
 
 </body>
 </html>
+<div class="card">
+
+<h2>13. Ranking Statistik Digit 0–9</h2>
+
+<table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>Digit</th>
+<th>Frekuensi</th>
+<th>Persentase</th>
+</tr>
+</thead>
+
+<tbody id="rankingDigit"></tbody>
+</table>
+
+</div>
+
+
+<div class="card">
+
+<h2>14. 6 Digit Statistik Teratas</h2>
+
+<div id="enamDigit"
+style="
+font-size:28px;
+font-weight:bold;
+letter-spacing:8px;
+text-align:center;
+padding:15px;
+background:#0a1726;
+border-radius:10px;
+color:#63e6ff;
+">
+-
+</div>
+
+<p class="note">
+Enam digit ini dihitung berdasarkan frekuensi kemunculan
+pada data historis yang dimasukkan.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>15. Statistik Posisi — 6 Digit Teratas</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Posisi</th>
+<th>6 Digit Statistik</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>AS</td>
+<td id="statAs">-</td>
+</tr>
+
+<tr>
+<td>KOP</td>
+<td id="statKop">-</td>
+</tr>
+
+<tr>
+<td>KEPALA</td>
+<td id="statKepala">-</td>
+</tr>
+
+<tr>
+<td>EKOR</td>
+<td id="statEkor">-</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="card">
+
+<h2>16. 4 Digit Historis Paling Sering Muncul</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Rank</th>
+<th>Result 4 Digit</th>
+<th>Frekuensi</th>
+</tr>
+</thead>
+
+<tbody id="ranking4D"></tbody>
+
+</table>
+function rankingStatistik(frek){
+
+    let arr = frek.map((nilai,digit)=>({
+        digit:digit,
+        frek:nilai
+    }));
+
+    arr.sort((a,b)=>b.frek-a.frek);
+
+    let html="";
+
+    let total=frek.reduce((a,b)=>a+b,0);
+
+    arr.forEach((x,i)=>{
+
+        let persen=total
+        ? ((x.frek/total)*100).toFixed(2)
+        : "0.00";
+
+        html+=`
+        <tr>
+            <td>${i+1}</td>
+            <td><b>${x.digit}</b></td>
+            <td>${x.frek}</td>
+            <td>${persen}%</td>
+        </tr>
+        `;
+    });
+
+    document.getElementById("rankingDigit").innerHTML=html;
+
+    let enam=arr
+        .slice(0,6)
+        .map(x=>x.digit)
+        .join("");
+
+    document.getElementById("enamDigit").textContent=enam;
+}
+
+
+function enamDigitPosisi(arr){
+
+    let ranking=arr
+        .map((nilai,digit)=>({
+            digit:digit,
+            frek:nilai
+        }))
+        .sort((a,b)=>b.frek-a.frek);
+
+    return ranking
+        .slice(0,6)
+        .map(x=>x.digit)
+        .join("");
+}
+
+
+function tampilStatistikPosisi(posisi){
+
+    document.getElementById("statAs").textContent =
+        enamDigitPosisi(posisi.AS);
+
+    document.getElementById("statKop").textContent =
+        enamDigitPosisi(posisi.KOP);
+
+    document.getElementById("statKepala").textContent =
+        enamDigitPosisi(posisi.KEPALA);
+
+    document.getElementById("statEkor").textContent =
+        enamDigitPosisi(posisi.EKOR);
+}
+
+
+function rankingHistoris4D(data){
+
+    let frek={};
+
+    data.forEach(x=>{
+
+        if(!frek[x]){
+            frek[x]=0;
+        }
+
+        frek[x]++;
+
+    });
+
+    let arr=Object.keys(frek)
+        .map(x=>({
+            angka:x,
+            jumlah:frek[x]
+        }))
+        .sort((a,b)=>b.jumlah-a.jumlah);
+
+    let html="";
+
+    arr.slice(0,20).forEach((x,i)=>{
+
+        html+=`
+        <tr>
+            <td>${i+1}</td>
+            <td><b>${x.angka}</b></td>
+            <td>${x.jumlah}</td>
+        </tr>
+        `;
+
+    });
+
+    document.getElementById("ranking4D").innerHTML=html;
+}
+</div>tampilTop("EKOR",posisi.EKOR);rankingStatistik(frek);
+
+tampilStatistikPosisi(posisi);
+
+rankingHistoris4D(data);
